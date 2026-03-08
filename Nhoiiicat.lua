@@ -57,7 +57,7 @@ down.Text = "DOWN"
 speedBox.FocusLost:Connect(function()
 	local num = tonumber(speedBox.Text)
 	if num then
-		speed = math.clamp(num,20,200)
+		speed = math.clamp(num,20,5000)
 	end
 	speedBox.Text = tostring(speed)
 end)

@@ -1,41 +1,68 @@
+-- Nhoiii Fly
+
 repeat task.wait() until game.Players.LocalPlayer.Character
 
 local player = game.Players.LocalPlayer
 local char = player.Character
-local hrp = char:WaitForChild("HumanoidRootPart")
 local hum = char:WaitForChild("Humanoid")
+local hrp = char:WaitForChild("HumanoidRootPart")
 
 local flying = false
-local speed = 70
+local speed = 60
+
 local bv
 local bg
 
 -- GUI
-local gui = Instance.new("ScreenGui")
-gui.Parent = game.CoreGui
+local gui = Instance.new("ScreenGui",game.CoreGui)
 
-local frame = Instance.new("Frame")
-frame.Parent = gui
-frame.Size = UDim2.new(0,160,0,90)
-frame.Position = UDim2.new(0,40,0,200)
-frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+local frame = Instance.new("Frame",gui)
+frame.Size = UDim2.new(0,220,0,200)
+frame.Position = UDim2.new(0,50,0,200)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 frame.Active = true
 frame.Draggable = true
 
-local title = Instance.new("TextLabel")
-title.Parent = frame
-title.Size = UDim2.new(1,0,0,30)
-title.Text = "NhoiiiCatHub Fly"
-title.BackgroundTransparency = 1
+local title = Instance.new("TextLabel",frame)
+title.Size = UDim2.new(1,0,0,35)
+title.Text = "FLY HUB"
 title.TextColor3 = Color3.new(1,1,1)
+title.BackgroundTransparency = 1
+title.TextScaled = true
 
-local button = Instance.new("TextButton")
-button.Parent = frame
-button.Size = UDim2.new(0.8,0,0,35)
-button.Position = UDim2.new(0.1,0,0.5,0)
-button.Text = "FLY : OFF"
+-- Fly Button
+local fly = Instance.new("TextButton",frame)
+fly.Size = UDim2.new(0.8,0,0,35)
+fly.Position = UDim2.new(0.1,0,0.25,0)
+fly.Text = "Fly : OFF"
 
--- Fly Functions
+-- Speed Box
+local speedBox = Instance.new("TextBox",frame)
+speedBox.Size = UDim2.new(0.8,0,0,30)
+speedBox.Position = UDim2.new(0.1,0,0.5,0)
+speedBox.Text = "Speed 60"
+
+-- Up
+local up = Instance.new("TextButton",frame)
+up.Size = UDim2.new(0.35,0,0,30)
+up.Position = UDim2.new(0.1,0,0.75,0)
+up.Text = "UP"
+
+-- Down
+local down = Instance.new("TextButton",frame)
+down.Size = UDim2.new(0.35,0,0,30)
+down.Position = UDim2.new(0.55,0,0.75,0)
+down.Text = "DOWN"
+
+speedBox.FocusLost:Connect(function()
+    local num = tonumber(speedBox.Text)
+    if num then
+        speed = math.clamp(num,20,200)
+        speedBox.Text = "Speed "..speed
+    else
+        speedBox.Text = "Speed "..speed
+    end
+end)
 
 function startFly()
 
@@ -43,12 +70,10 @@ function startFly()
 
     bv = Instance.new("BodyVelocity")
     bv.MaxForce = Vector3.new(9e9,9e9,9e9)
-    bv.Velocity = Vector3.new(0,0,0)
     bv.Parent = hrp
 
     bg = Instance.new("BodyGyro")
     bg.MaxTorque = Vector3.new(9e9,9e9,9e9)
-    bg.CFrame = hrp.CFrame
     bg.Parent = hrp
 
     hum.PlatformStand = true
@@ -58,16 +83,13 @@ function startFly()
         if flying then
 
             local cam = workspace.CurrentCamera
-            local move = Vector3.new()
+            local move = hum.MoveDirection
 
-            if hum.MoveDirection.Magnitude > 0 then
-                move = cam.CFrame.LookVector * speed
-            end
-
-            bv.Velocity = move
+            bv.Velocity = cam.CFrame.LookVector * move.Magnitude * speed
             bg.CFrame = cam.CFrame
 
         end
+
     end)
 
 end
@@ -82,14 +104,26 @@ function stopFly()
 
 end
 
-button.MouseButton1Click:Connect(function()
+fly.MouseButton1Click:Connect(function()
 
     if flying then
         stopFly()
-        button.Text = "FLY : OFF"
+        fly.Text = "Fly : OFF"
     else
         startFly()
-        button.Text = "FLY : ON"
+        fly.Text = "Fly : ON"
     end
 
+end)
+
+up.MouseButton1Click:Connect(function()
+    if flying then
+        hrp.Velocity = Vector3.new(0,speed,0)
+    end
+end)
+
+down.MouseButton1Click:Connect(function()
+    if flying then
+        hrp.Velocity = Vector3.new(0,-speed,0)
+    end
 end)

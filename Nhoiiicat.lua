@@ -25,7 +25,7 @@ frame.Draggable = true
 
 local title = Instance.new("TextLabel",frame)
 title.Size = UDim2.new(1,0,0,35)
-title.Text = "FLY HUB"
+title.Text = "Nhoiii Fly"
 title.TextColor3 = Color3.new(1,1,1)
 title.BackgroundTransparency = 1
 title.TextScaled = true

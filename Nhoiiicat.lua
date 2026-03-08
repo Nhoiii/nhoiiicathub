@@ -1,16 +1,43 @@
-local _0x1={"6c6f6164737472696e67","68747470476574","68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f584e454f46462f466c7947756956332f6d61696e2f466c7947756956332e747874"}
+-- Simple Roblox Key System
 
-local function _0x2(hex)
-    return (hex:gsub("..",function(c)
-        return string.char(tonumber(c,16))
-    end))
-end
+local correctKey = "NHOOIICAT-123"
 
-local a=_0x2(_0x1[1])
-local b=_0x2(_0x1[2])
-local c=_0x2(_0x1[3])
+local gui = Instance.new("ScreenGui", game.CoreGui)
 
-local d=game
-local e=d[b](d,c)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0,300,0,150)
+frame.Position = UDim2.new(0.5,-150,0.5,-75)
+frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
 
-_G[a](e)()
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1,0,0,40)
+title.Text = "Enter Key"
+title.TextColor3 = Color3.new(1,1,1)
+title.BackgroundTransparency = 1
+
+local box = Instance.new("TextBox", frame)
+box.Size = UDim2.new(0.8,0,0,35)
+box.Position = UDim2.new(0.1,0,0.4,0)
+box.PlaceholderText = "Enter Key Here"
+box.Text = ""
+
+local button = Instance.new("TextButton", frame)
+button.Size = UDim2.new(0.6,0,0,35)
+button.Position = UDim2.new(0.2,0,0.7,0)
+button.Text = "Submit"
+
+button.MouseButton1Click:Connect(function()
+
+    if box.Text == correctKey then
+        
+        frame:Destroy()
+
+        -- load script after key correct
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+
+    else
+        box.Text = ""
+        box.PlaceholderText = "Wrong Key"
+    end
+
+end)

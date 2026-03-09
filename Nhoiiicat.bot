@@ -1,0 +1,129 @@
+const { Client, GatewayIntentBits, REST, Routes } = require("discord.js");
+const fs = require("fs");
+
+const TOKEN = "MTM3MTQ0NTM1NTUxODA5OTQ1Ng.GXZ28Y.EQ_rWDDsRVFqUulMgc1DXx1Rmo_IinKyNxYMKA";
+const CLIENT_ID = "9645";
+
+const allowedUsers = [
+"1212720902299590686"
+];
+
+let data = {};
+
+if (fs.existsSync("data.json")) {
+ try {
+  data = JSON.parse(fs.readFileSync("data.json", "utf8"));
+ } catch {
+  data = {};
+ }
+}
+
+function saveData(){
+ fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
+}
+
+const client = new Client({
+ intents: [
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.MessageContent
+ ]
+});
+
+const commands = [
+ { name:"them", description:"Them du lieu",
+  options:[
+   {name:"key",type:3,required:true,description:"Key"},
+   {name:"value",type:3,required:true,description:"Value"}
+ ]},
+
+ { name:"tim", description:"Tim key",
+  options:[
+   {name:"key",type:3,required:true,description:"Key"}
+ ]},
+
+ { name:"xoa", description:"Xoa key",
+  options:[
+   {name:"key",type:3,required:true,description:"Key"}
+ ]},
+
+ { name:"sua", description:"Sua du lieu",
+  options:[
+   {name:"key",type:3,required:true,description:"Key"},
+   {name:"value",type:3,required:true,description:"Value moi"}
+ ]},
+
+ { name:"list", description:"Xem tat ca key"}
+];
+
+const rest = new REST({version:"10"}).setToken(TOKEN);
+
+client.once("ready", async () => {
+ await rest.put(
+  Routes.applicationCommands(CLIENT_ID),
+  {body:commands}
+ );
+ console.log("Bot Online");
+});
+
+client.on("interactionCreate", async interaction => {
+ if (!interaction.isChatInputCommand()) return;
+ if (!allowedUsers.includes(interaction.user.id)) return;
+
+ if (interaction.commandName==="them"){
+  const key=interaction.options.getString("key");
+  const value=interaction.options.getString("value");
+  data[key]=value;
+  saveData();
+  return interaction.reply(`${key} -> ${value}`);
+ }
+
+ if (interaction.commandName==="tim"){
+  const key=interaction.options.getString("key");
+  return interaction.reply(data[key] || "null");
+ }
+
+ if (interaction.commandName==="xoa"){
+  const key=interaction.options.getString("key");
+  if(data[key]){
+   delete data[key];
+   saveData();
+   return interaction.reply("Da xoa");
+  }
+  return interaction.reply("Khong ton tai");
+ }
+
+ if (interaction.commandName==="sua"){
+  const key=interaction.options.getString("key");
+  const value=interaction.options.getString("value");
+  if(data[key]){
+   data[key]=value;
+   saveData();
+   return interaction.reply("Da sua");
+  }
+  return interaction.reply("Khong ton tai");
+ }
+
+ if (interaction.commandName==="list"){
+  const keys=Object.keys(data);
+  if(keys.length===0) return interaction.reply("Trong");
+  return interaction.reply(keys.join(", "));
+ }
+});
+
+client.on("messageCreate", msg=>{
+ if(msg.author.bot) return;
+ const content=msg.content.trim().toLowerCase();
+ if(data[content]) msg.reply(data[content]);
+});
+
+async function startBot(){
+ try{
+  await client.login(TOKEN);
+ }catch{
+  console.log("Mat mang -> thu lai sau 5s");
+  setTimeout(startBot,5000);
+ }
+}
+
+startBot();

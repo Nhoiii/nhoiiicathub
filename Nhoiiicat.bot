@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, REST, Routes } = require("discord.js");
 const fs = require("fs");
 
-const TOKEN = "MTM3MTQ0NTM1NTUxODA5OTQ1Ng.GXZ28Y.EQ_rWDDsRVFqUulMgc1DXx1Rmo_IinKyNxYMKA";
+const TOKEN = "";
 const CLIENT_ID = "#9645";
 
 const allowedUsers = [
